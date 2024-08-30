@@ -5,7 +5,6 @@ import fs from 'fs';
 import path from 'path';
 
 import possessionRoutes from './routes/possessionRoutes.js';
-import patrimoineRoutes from './routes/patrimoineRoutes.js';
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -13,50 +12,43 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(bodyParser.json());
 
-const dataFilePath = path.join(process.cwd(), 'data', 'data.json');
+const dataFilePath = path.join(process.cwd(), 'public', 'data.json'); // Assure-toi que le chemin est correct
+let data = { personnes: [], patrimoines: [] };
 
-let data = {
-  personnes: [],
-  patrimoines: []
-};
-
+// Fonction pour lire les données
 const loadData = () => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(dataFilePath, 'utf8', (err, jsonData) => {
-      if (err) {
-        reject('Error reading data file:', err);
-      } else {
-        data = JSON.parse(jsonData);
-        resolve();
-      }
-    });
+  fs.readFile(dataFilePath, 'utf8', (err, jsonData) => {
+    if (err) {
+      console.error('Error reading data file:', err);
+      return;
+    }
+    data = JSON.parse(jsonData);
   });
 };
 
+// Charger les données au démarrage
+loadData();
+
+// Middleware pour sauvegarder les données
 const saveData = () => {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(dataFilePath, JSON.stringify(data, null, 2), 'utf8', (err) => {
-      if (err) {
-        reject('Error writing data file:', err);
-      } else {
-        resolve();
-      }
-    });
+  fs.writeFile(dataFilePath, JSON.stringify(data, null, 2), (err) => {
+    if (err) {
+      console.error('Error writing data file:', err);
+    }
   });
 };
 
-// Load initial data
-loadData()
-  .then(() => {
-    app.use('/possession', possessionRoutes);
-    app.use('/patrimoine', patrimoineRoutes);
+// Assure-toi que les contrôleurs utilisent les données mises à jour
+app.use('/possession', possessionRoutes);
 
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  })
-  .catch(error => {
-    console.error(error);
-  });
+// Route pour recharger les données (pour tester)
+app.post('/reload-data', (req, res) => {
+  loadData();
+  res.send('Data reloaded');
+});
 
-export { data, saveData }; // Exporter les données et la fonction de sauvegarde pour les contrôleurs
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+
+export { data, saveData }; // Exporter les données et la fonction pour sauvegarder les données

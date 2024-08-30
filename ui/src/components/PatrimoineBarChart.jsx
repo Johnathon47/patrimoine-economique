@@ -1,4 +1,3 @@
-// src/components/PatrimoineBarChart.jsx
 import React, { useEffect, useState } from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js';
@@ -6,25 +5,36 @@ import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, Li
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale);
 
 const PatrimoineBarChart = () => {
-  const [data, setData] = useState({ datasets: [] });
+  const [data, setData] = useState({
+    labels: ['Aucune donnée'],
+    datasets: [
+      {
+        label: 'Valeur',
+        data: [0],
+        backgroundColor: '#36A2EB',
+      },
+    ],
+  });
 
   useEffect(() => {
-    fetch('/patrimoine')  // Assure-toi que ce chemin est correct
+    fetch('/data/data.json')
       .then(response => response.json())
       .then(data => {
-        const labels = data.map(item => item.libelle);
-        const values = data.map(item => item.valeur);
+        if (data.patrimoines.length > 0) {
+          const labels = data.patrimoines.map(item => item.libelle);
+          const values = data.patrimoines.map(item => item.valeur);
 
-        setData({
-          labels: labels,
-          datasets: [
-            {
-              label: 'Valeur',
-              data: values,
-              backgroundColor: '#36A2EB',
-            },
-          ],
-        });
+          setData({
+            labels: labels,
+            datasets: [
+              {
+                label: 'Valeur',
+                data: values,
+                backgroundColor: '#36A2EB',
+              },
+            ],
+          });
+        }
       })
       .catch(error => console.error('Erreur de récupération des données:', error));
   }, []);

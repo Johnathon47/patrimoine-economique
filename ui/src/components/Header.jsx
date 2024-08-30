@@ -13,6 +13,7 @@ function Header() {
             <Nav.Link as={Link} to="/patrimoine">Patrimoine</Nav.Link>
             <Nav.Link as={Link} to="/possession">Liste des Possessions</Nav.Link>
             <Nav.Link as={Link} to="/possession/create">Créer Possession</Nav.Link>
+            <Nav.Link as={Link} to="/patrimoine/graph">PatrimoineGraph</Nav.Link>
           </Nav>
         </Navbar.Collapse>
       </Container>

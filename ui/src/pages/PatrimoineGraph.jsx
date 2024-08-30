@@ -5,7 +5,7 @@ import PatrimoineBarChart from '../components/PatrimoineBarChart';
 
 const PatrimoineGraph = () => (
   <div className="container">
-    <h1>Page du Patrimoine</h1>
+    <h1>Graphique du Patrimoine</h1>
     <PatrimoinePieChart />
     <PatrimoineBarChart />
   </div>
