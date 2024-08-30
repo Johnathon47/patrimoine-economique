@@ -1,9 +1,9 @@
-// backend/routes/patrimoineRoutes.js
-const express = require('express');
+import express from 'express';
+import { getValeurPatrimoine, getValeurPatrimoineRange } from '../controllers/patrimoineController.js';
+
 const router = express.Router();
-const patrimoineController = require('../controllers/patrimoineController');
 
-router.get('/:date', patrimoineController.getValeurPatrimoineByDate);
-router.post('/range', patrimoineController.getValeurPatrimoineRange);
+router.get('/:date', getValeurPatrimoine);
+router.post('/range', getValeurPatrimoineRange);
 
-module.exports = router;
+export default router;

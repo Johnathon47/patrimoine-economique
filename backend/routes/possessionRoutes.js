@@ -1,11 +1,11 @@
-// backend/routes/possessionRoutes.js
-const express = require('express');
+import express from 'express';
+import { getPossessions, createPossession, updatePossession, closePossession } from '../controllers/possessionController.js';
+
 const router = express.Router();
-const possessionController = require('../controllers/possessionController');
 
-router.get('/', possessionController.getPossessions);
-router.post('/', possessionController.createPossession);
-router.put('/:libelle', possessionController.updatePossession);
-router.post('/:libelle/close', possessionController.closePossession);
+router.get('/', getPossessions);
+router.post('/', createPossession);
+router.put('/:libelle', updatePossession);
+router.post('/:libelle/close', closePossession);
 
-module.exports = router;
+export default router;

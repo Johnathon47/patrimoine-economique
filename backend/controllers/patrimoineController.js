@@ -1,16 +1,19 @@
-// backend/controllers/patrimoineController.js
-let possessions = []; // Utilise le même tableau pour les données simulées
+import Patrimoine from '../../models/Patrimoine.js';
+import Possession from '../../models/possessions/Possession.js'; // Assuming you have a Possession model
 
-exports.getValeurPatrimoineByDate = (req, res) => {
+const patrimoine = new Patrimoine('John Doe', []); // This should ideally be replaced with a database
+
+export const getValeurPatrimoine = (req, res) => {
   const { date } = req.params;
-  // Calcul de la valeur du patrimoine pour la date donnée
-  const valeur = 0; // Logique de calcul ici
+  const valeur = patrimoine.getValeur(new Date(date));
   res.json({ valeur });
 };
 
-exports.getValeurPatrimoineRange = (req, res) => {
+export const getValeurPatrimoineRange = (req, res) => {
   const { type, dateDebut, dateFin, jour } = req.body;
-  // Calcul de la valeur du patrimoine pour la plage de dates donnée
-  const valeur = 0; // Logique de calcul ici
+  
+  // Implement the range calculation here
+  const valeur = patrimoine.getValeur(new Date(dateFin)); // Example
   res.json({ valeur });
 };
+
