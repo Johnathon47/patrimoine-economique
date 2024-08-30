@@ -10,7 +10,7 @@
           "libelle": "MacBook Pro",
           "valeur": 4000000,
           "dateDebut": "2023-12-25T00:00:00.000Z",
-          "dateFin": null,
+          "dateFin": "2027-12-25T21:00:00.000Z",
           "tauxAmortissement": 5
         },
         {
@@ -18,7 +18,7 @@
           "libelle": "Alternance",
           "valeur": 500000,
           "dateDebut": "2022-12-31T21:00:00.000Z",
-          "dateFin": null,
+          "dateFin": "2025-12-31T21:00:00.000Z",
           "tauxAmortissement": 10,
           "jour": 1,
           "valeurConstante": 500000
@@ -28,7 +28,7 @@
           "libelle": "Survie",
           "valeur": 300000,
           "dateDebut": "2022-12-31T21:00:00.000Z",
-          "dateFin": null,
+          "dateFin": "2029-12-31T21:00:00.000Z",
           "tauxAmortissement": 15,
           "jour": 2,
           "valeurConstante": 300000

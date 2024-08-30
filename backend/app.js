@@ -14,24 +14,49 @@ app.use(cors());
 app.use(bodyParser.json());
 
 const dataFilePath = path.join(process.cwd(), 'data', 'data.json');
+
 let data = {
   personnes: [],
   patrimoines: []
 };
 
-fs.readFile(dataFilePath, 'utf8', (err, jsonData) => {
-  if (err) {
-    console.error('Error reading data file:', err);
-    return;
-  }
-  data = JSON.parse(jsonData);
-});
+const loadData = () => {
+  return new Promise((resolve, reject) => {
+    fs.readFile(dataFilePath, 'utf8', (err, jsonData) => {
+      if (err) {
+        reject('Error reading data file:', err);
+      } else {
+        data = JSON.parse(jsonData);
+        resolve();
+      }
+    });
+  });
+};
 
-app.use('/possession', possessionRoutes);
-app.use('/patrimoine', patrimoineRoutes);
+const saveData = () => {
+  return new Promise((resolve, reject) => {
+    fs.writeFile(dataFilePath, JSON.stringify(data, null, 2), 'utf8', (err) => {
+      if (err) {
+        reject('Error writing data file:', err);
+      } else {
+        resolve();
+      }
+    });
+  });
+};
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+// Load initial data
+loadData()
+  .then(() => {
+    app.use('/possession', possessionRoutes);
+    app.use('/patrimoine', patrimoineRoutes);
 
-export { data }; // Exporter les données pour les contrôleurs
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+  })
+  .catch(error => {
+    console.error(error);
+  });
+
+export { data, saveData }; // Exporter les données et la fonction de sauvegarde pour les contrôleurs

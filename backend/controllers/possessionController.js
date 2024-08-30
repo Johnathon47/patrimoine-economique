@@ -1,5 +1,9 @@
-import { data } from '../app.js'; // Assurez-vous que le chemin est correct
+import fs from 'fs';
+import path from 'path';
 import Possession from '../../models/possessions/Possession.js';
+import { data } from '../app.js'; // Assure-toi que le chemin est correct
+
+const dataFilePath = path.join(process.cwd(), 'data', 'data.json');
 
 export const getPossessions = (req, res) => {
   const patrimoine = data.patrimoines.find(p => p.possesseur.nom === 'John Doe');
@@ -11,10 +15,10 @@ export const getPossessions = (req, res) => {
 };
 
 export const createPossession = (req, res) => {
-  const { libelle, valeur, dateDebut, taux } = req.body;
+  const { libelle, valeur, dateDebut, dateFin, taux } = req.body;
   const patrimoine = data.patrimoines.find(p => p.possesseur.nom === 'John Doe');
   if (patrimoine) {
-    const newPossession = new Possession(null, libelle, valeur, new Date(dateDebut), null, taux);
+    const newPossession = new Possession(null, libelle, valeur, new Date(dateDebut), dateFin ? new Date(dateFin) : null, taux);
     patrimoine.possessions.push(newPossession);
     fs.writeFile(dataFilePath, JSON.stringify(data, null, 2), (err) => {
       if (err) {
