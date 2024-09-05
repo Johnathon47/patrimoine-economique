@@ -1,6 +1,3 @@
-// src/pages/ListPossession.jsx
-import Possession from "../../../models/possessions/Possession.js";
-import Personne from "../../../models/Personne.js";
 import { useEffect, useState } from 'react';
 import { Table, Button } from 'react-bootstrap';
 import { Link } from 'react-router-dom';
@@ -10,7 +7,7 @@ function ListPossession() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch('/possession')
+    fetch('http://localhost:5000/possession')
       .then(response => response.json())
       .then(data => {
         setPossessions(data);
@@ -21,6 +18,20 @@ function ListPossession() {
         setLoading(false);
       });
   }, []);
+
+  const handleDelete = (libelle) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer cette possession ?')) {
+      fetch(`http://localhost:5000/possession/${libelle}`, { method: 'DELETE' })
+        .then(response => {
+          if (response.ok) {
+            setPossessions(possessions.filter(possession => possession.libelle !== libelle));
+          } else {
+            console.error('Erreur lors de la suppression de la possession');
+          }
+        })
+        .catch(error => console.error('Erreur lors de la suppression:', error));
+    }
+  };
 
   if (loading) {
     return <p>Chargement des possessions...</p>;
@@ -49,9 +60,12 @@ function ListPossession() {
               <td>{possession.dateFin ? new Date(possession.dateFin).toUTCString() : 'Non défini'}</td>
               <td>{possession.tauxAmortissement}</td>
               <td>
-                <Link to={`/possession/${possession.libelle}/update`}>
+                <Link to={`/possession/update/${possession.libelle}`}>
                   <Button variant="warning">Modifier</Button>
                 </Link>
+                <Button variant="danger" onClick={() => handleDelete(possession.libelle)}>
+                  Supprimer
+                </Button>
               </td>
             </tr>
           ))}

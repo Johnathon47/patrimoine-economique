@@ -6,13 +6,16 @@ import path from 'path';
 
 import possessionRoutes from './routes/possessionRoutes.js';
 
+// Crée une instance de l'application Express
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Configure les middleware pour gérer les requêtes CORS et le parsing des données JSON
 app.use(cors());
 app.use(bodyParser.json());
 
-const dataFilePath = path.join(process.cwd(), 'public', 'data.json'); // Assure-toi que le chemin est correct
+// Définit le chemin du fichier de données JSON
+const dataFilePath = path.join(process.cwd(), 'public', 'data.json');
 let data = { personnes: [], patrimoines: [] };
 
 // Fonction pour lire les données
@@ -22,14 +25,21 @@ const loadData = () => {
       console.error('Error reading data file:', err);
       return;
     }
-    data = JSON.parse(jsonData);
+    try {
+      data = JSON.parse(jsonData);
+      // Filtrer les données invalides si nécessaire
+      data = data.filter(item => item && item.possesseur && item.dateDebut && item.dateFin);
+    } catch (parseErr) {
+      console.error('Error parsing JSON data:', parseErr);
+    }
   });
 };
 
-// Charger les données au démarrage
+
+// Charge les données au démarrage de l'application
 loadData();
 
-// Middleware pour sauvegarder les données
+// Fonction pour sauvegarder les données en mémoire dans le fichier JSON
 const saveData = () => {
   fs.writeFile(dataFilePath, JSON.stringify(data, null, 2), (err) => {
     if (err) {
@@ -38,17 +48,20 @@ const saveData = () => {
   });
 };
 
-// Assure-toi que les contrôleurs utilisent les données mises à jour
+// Utilise les routes définies dans le module `possessionRoutes`
 app.use('/possession', possessionRoutes);
 
-// Route pour recharger les données (pour tester)
+// Route pour recharger les données depuis le fichier JSON
 app.post('/reload-data', (req, res) => {
   loadData();
   res.send('Data reloaded');
 });
 
+// Démarre le serveur sur le port spécifié
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
 });
 
-export { data, saveData }; // Exporter les données et la fonction pour sauvegarder les données
+// Exporte l'application Express et les fonctions pour accéder aux données et les sauvegarder
+export default app;
+export { data, saveData };

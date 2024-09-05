@@ -17,7 +17,7 @@ function App() {
           <Route path="/patrimoine" element={<Patrimoine />} />
           <Route path="/possession" element={<ListPossession />} />
           <Route path="/possession/create" element={<CreatePossession />} />
-          <Route path="/possession/update/:id" element={<UpdatePossession />} />
+          <Route path="/possession/update/:libelle" element={<UpdatePossession />} />
           <Route path='/patrimoine/graph' element={<PatrimoineGraph />} />
         </Routes>
       </main>
