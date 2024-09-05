@@ -10,7 +10,7 @@ function UpdatePossession() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`/possession/${libelle}`)
+    fetch(`http://localhost:5000/possession/${libelle}`)
       .then(response => response.json())
       .then(data => {
         setPossession(data);
@@ -31,7 +31,7 @@ function UpdatePossession() {
       return;
     }
 
-    fetch(`/possession/${libelle}`, {
+    fetch(`http://localhost:5000/possession/${libelle}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ dateFin }),
