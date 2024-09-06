@@ -1,3 +1,5 @@
+/* index.css */
+
 :root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
@@ -25,9 +27,12 @@ a:hover {
 body {
   margin: 0;
   display: flex;
-  place-items: center;
-  min-width: 320px;
+  flex-direction: column;
   min-height: 100vh;
+}
+
+#root {
+  flex: 1;
 }
 
 h1 {
@@ -52,6 +57,19 @@ button:hover {
 button:focus,
 button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
+}
+
+.container-fluid {
+  width: 100%;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+footer {
+  background-color: #343a40; /* Dark background for the footer */
+  color: white;
+  padding: 1rem;
+  text-align: center;
 }
 
 @media (prefers-color-scheme: light) {
