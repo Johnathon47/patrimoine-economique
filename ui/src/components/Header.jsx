@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
-import { Container, Nav, Navbar } from 'react-bootstrap';
+import { Nav, Navbar } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Header() {
   return (
     <Navbar bg="dark" variant="dark" expand="lg" className="mb-4">
-      <Container>
+      <div className="container-fluid">
         <Navbar.Brand as={Link} to="/patrimoine">Patrimoine Économique</Navbar.Brand>
         <Navbar.Toggle aria-controls="navbar-nav" />
         <Navbar.Collapse id="navbar-nav">
@@ -16,7 +16,7 @@ function Header() {
             <Nav.Link as={Link} to="/patrimoine/graph">PatrimoineGraph</Nav.Link>
           </Nav>
         </Navbar.Collapse>
-      </Container>
+      </div>
     </Navbar>
   );
 }
