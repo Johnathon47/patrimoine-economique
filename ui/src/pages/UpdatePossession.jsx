@@ -6,6 +6,9 @@ function UpdatePossession() {
   const { libelle } = useParams();
   const [possession, setPossession] = useState(null);
   const [dateFin, setDateFin] = useState('');
+  const [newLibelle, setNewLibelle] = useState('');
+  const [valeur, setValeur] = useState('');
+  const [tauxAmortissement, setTauxAmortissement] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
@@ -15,6 +18,9 @@ function UpdatePossession() {
       .then(data => {
         setPossession(data);
         setDateFin(data.dateFin || '');
+        setNewLibelle(data.libelle || '');
+        setValeur(data.valeur || '');
+        setTauxAmortissement(data.tauxAmortissement || '');
       })
       .catch(error => {
         console.error('Erreur lors du chargement de la possession:', error);
@@ -31,10 +37,17 @@ function UpdatePossession() {
       return;
     }
 
+    const updatedData = {
+      libelle: newLibelle,
+      valeur,
+      dateFin,
+      tauxAmortissement,
+    };
+
     fetch(`http://localhost:5000/possession/${libelle}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ dateFin }),
+      body: JSON.stringify(updatedData),
     })
       .then(response => response.json())
       .then(() => {
@@ -55,12 +68,37 @@ function UpdatePossession() {
       <h1>Modifier la Possession</h1>
       {error && <Alert variant="danger">{error}</Alert>}
       <Form onSubmit={handleSubmit}>
+        <Form.Group controlId="formLibelle">
+          <Form.Label>Libellé</Form.Label>
+          <Form.Control
+            type="text"
+            value={newLibelle}
+            onChange={(e) => setNewLibelle(e.target.value)}
+          />
+        </Form.Group>
+        <Form.Group controlId="formValeur">
+          <Form.Label>Valeur</Form.Label>
+          <Form.Control
+            type="number"
+            value={valeur}
+            onChange={(e) => setValeur(e.target.value)}
+          />
+        </Form.Group>
         <Form.Group controlId="formDateFin">
           <Form.Label>Date Fin</Form.Label>
           <Form.Control
             type="date"
             value={dateFin}
             onChange={(e) => setDateFin(e.target.value)}
+          />
+        </Form.Group>
+        <Form.Group controlId="formTauxAmortissement">
+          <Form.Label>Taux d'Amortissement</Form.Label>
+          <Form.Control
+            type="number"
+            step="0.01"
+            value={tauxAmortissement}
+            onChange={(e) => setTauxAmortissement(e.target.value)}
           />
         </Form.Group>
         <Button variant="primary" type="submit">
