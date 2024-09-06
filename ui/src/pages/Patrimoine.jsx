@@ -84,13 +84,17 @@ function Patrimoine() {
       </Table>
       <div>
         <label htmlFor="dateCalcul">Calculer la valeur à la date :</label>
+        <div className='mb-2'>
         <input
           type="date"
           id="dateCalcul"
           value={dateCalcul.toISOString().split('T')[0]} // format yyyy-mm-dd
           onChange={handleDateChange}
         />
+        </div>
+        <div className='mb-2'>
         <Button onClick={handleCalculValeur}>Calculer Valeur Totale</Button>
+        </div>
         {valeurPatrimoine !== null && <h3>Valeur Totale du Patrimoine à {dateCalcul.toDateString()}: {valeurPatrimoine}</h3>}
       </div>
     </>
