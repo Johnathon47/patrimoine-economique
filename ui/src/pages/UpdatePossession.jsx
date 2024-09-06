@@ -30,20 +30,20 @@ function UpdatePossession() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
+  
     // Assurer que la date de fin est une date valide
     if (dateFin && new Date(dateFin).toString() === 'Invalid Date') {
       setError('Date de fin invalide.');
       return;
     }
-
+  
     const updatedData = {
-      libelle: newLibelle,
+      newLibelle,
       valeur,
       dateFin,
       tauxAmortissement,
     };
-
+  
     fetch(`http://localhost:5000/possession/${libelle}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
@@ -58,6 +58,7 @@ function UpdatePossession() {
         setError('Erreur lors de la mise à jour de la possession.');
       });
   };
+  
 
   if (!possession) {
     return <p>Chargement de la possession...</p>;
