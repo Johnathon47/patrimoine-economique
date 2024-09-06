@@ -124,8 +124,8 @@ export const createPossession = async (req, res) => {
 
 export const updatePossession = (req, res) => {
   const { libelle } = req.params;
-  const { dateFin } = req.body;
-  
+  const { newLibelle, valeur, dateFin, tauxAmortissement } = req.body;
+
   fs.readFile(dataFilePath, 'utf8', (err, jsonData) => {
     if (err) {
       console.error('Error reading data file:', err);
@@ -144,7 +144,11 @@ export const updatePossession = (req, res) => {
       const patrimoine = patrimoineData.data;
       const possession = patrimoine.possessions.find(p => p.libelle === libelle);
       if (possession) {
-        possession.dateFin = new Date(dateFin);
+        if (newLibelle) possession.libelle = newLibelle;
+        if (valeur) possession.valeur = valeur;
+        if (dateFin) possession.dateFin = new Date(dateFin);
+        if (tauxAmortissement) possession.tauxAmortissement = tauxAmortissement;
+
         fs.writeFile(dataFilePath, JSON.stringify(data, null, 2), (err) => {
           if (err) {
             console.error('Error writing data file:', err);
@@ -160,6 +164,7 @@ export const updatePossession = (req, res) => {
     }
   });
 };
+
 
 // Fonction pour supprimer une possession par libelle
 export const deletePossession = async (req, res) => {
