@@ -19,6 +19,23 @@ function ListPossession() {
       });
   }, []);
 
+  const handleClosePossession = (libelle) => {
+    fetch(`http://localhost:5000/possession/${libelle}/close`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+    })
+      .then(response => response.json())
+      .then(updatedPossession => {
+        // Met à jour la possession dans la liste avec la nouvelle date de fin
+        setPossessions(possessions.map(p => 
+          p.libelle === libelle ? { ...p, dateFin: updatedPossession.dateFin } : p
+        ));
+      })
+      .catch(error => {
+        console.error("Erreur lors de la clôture de la possession :", error);
+      });
+  };
+
   const handleDelete = (libelle) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette possession ?')) {
       fetch(`http://localhost:5000/possession/${libelle}`, { method: 'DELETE' })
@@ -60,12 +77,23 @@ function ListPossession() {
               <td>{possession.dateFin ? new Date(possession.dateFin).toUTCString() : 'Non défini'}</td>
               <td>{possession.tauxAmortissement}</td>
               <td>
+                <div className='mb-2'>
                 <Link to={`/possession/update/${possession.libelle}`}>
                   <Button variant="warning">Modifier</Button>
                 </Link>
+                </div>
+                <div className='mb-2'>
                 <Button variant="danger" onClick={() => handleDelete(possession.libelle)}>
                   Supprimer
                 </Button>
+                </div>
+                {!possession.dateFin && (
+                  <div className='mb-2'>
+                    <Button variant="primary" onClick={() => handleClosePossession(possession.libelle)}>
+                    Clôturer
+                  </Button>
+                  </div>
+                )}
               </td>
             </tr>
           ))}
