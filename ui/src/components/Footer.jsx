@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 function Footer() {
   return (
-    <footer className="bg-dark text-white text-center py-3">
+    <footer className="bg-dark text-white text-center py-5">
       <Container>
         <Row>
           <Col>
