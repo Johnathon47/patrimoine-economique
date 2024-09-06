@@ -1,103 +1,80 @@
-import fs from 'fs';
+import fs from 'fs/promises'; // Utilisation des promesses intégrées
 import path from 'path';
 
 const dataFilePath = path.join(process.cwd(), 'public', 'data.json');
 
 // Fonction pour lire les données depuis le fichier JSON
-const readDataFromFile = () => {
-  return new Promise((resolve, reject) => {
-    fs.readFile(dataFilePath, 'utf8', (err, jsonData) => {
-      if (err) {
-        return reject(new Error('Error reading data file:', err));
-      }
-      try {
-        const data = JSON.parse(jsonData);
-        resolve(data);
-      } catch (parseError) {
-        reject(new Error('Error parsing JSON data:', parseError));
-      }
-    });
-  });
+const readDataFromFile = async () => {
+  try {
+    const jsonData = await fs.readFile(dataFilePath, 'utf8');
+    return JSON.parse(jsonData);
+  } catch (err) {
+    throw new Error('Error reading or parsing data file:', err);
+  }
 };
 
 // Fonction pour écrire les données dans le fichier JSON
-const writeDataToFile = (data) => {
-  return new Promise((resolve, reject) => {
-    fs.writeFile(dataFilePath, JSON.stringify(data, null, 2), (err) => {
-      if (err) {
-        return reject(new Error('Error writing data file:', err));
-      }
-      resolve();
-    });
-  });
+const writeDataToFile = async (data) => {
+  try {
+    await fs.writeFile(dataFilePath, JSON.stringify(data, null, 2));
+  } catch (err) {
+    throw new Error('Error writing data file:', err);
+  }
 };
 
 // Nouvelle route pour récupérer une possession par libelle
-export const getPossessionByLibelle = (req, res) => {
+export const getPossessionByLibelle = async (req, res) => {
   const { libelle } = req.params;
 
-  fs.readFile(dataFilePath, 'utf8', (err, jsonData) => {
-    if (err) {
-      console.error('Error reading data file:', err);
-      return res.status(500).send('Error reading data');
-    }
-    let data;
-    try {
-      data = JSON.parse(jsonData);
-    } catch (parseError) {
-      console.error('Error parsing JSON data:', parseError);
-      return res.status(500).send('Error parsing data');
-    }
-    
-    const patrimoineData = data.find(item => item.model === 'Patrimoine');
-    if (patrimoineData) {
-      const patrimoine = patrimoineData.data;
-      const possession = patrimoine.possessions.find(p => p.libelle === libelle);
-      
-      if (possession) {
-        res.json(possession);
-      } else {
-        res.status(404).send('Possession not found');
-      }
-    } else {
-      res.status(404).send('Patrimoine not found');
-    }
-  });
-};
-
-
-export const getPossessions = (req, res) => {
-  fs.readFile(dataFilePath, 'utf8', (err, jsonData) => {
-    if (err) {
-      console.error('Error reading data file:', err);
-      return res.status(500).send('Error reading data');
-    }
-    let data;
-    try {
-      data = JSON.parse(jsonData);
-    } catch (parseError) {
-      console.error('Error parsing JSON data:', parseError);
-      return res.status(500).send('Error parsing data');
-    }
-    
-    const patrimoineData = data.find(item => item.model === 'Patrimoine');
-    if (patrimoineData) {
-      const patrimoine = patrimoineData.data;
-      const possessions = patrimoine.possessions.filter(p => p.possesseur.nom === 'John Doe');
-      res.json(possessions);
-    } else {
-      res.status(404).send('Patrimoine not found');
-    }
-  });
-};
-
-export const createPossession = async (req, res) => {
-  const { libelle, valeur, dateDebut, dateFin, taux } = req.body;
-  
   try {
     const data = await readDataFromFile();
-    
     const patrimoineData = data.find(item => item.model === 'Patrimoine');
+    
+    if (!patrimoineData) {
+      return res.status(404).send('Patrimoine not found');
+    }
+    
+    const patrimoine = patrimoineData.data;
+    const possession = patrimoine.possessions.find(p => p.libelle === libelle);
+    
+    if (possession) {
+      res.json(possession);
+    } else {
+      res.status(404).send('Possession not found');
+    }
+  } catch (error) {
+    console.error('Error retrieving possession:', error);
+    res.status(500).send('Error retrieving possession');
+  }
+};
+
+// Route pour récupérer toutes les possessions
+export const getPossessions = async (req, res) => {
+  try {
+    const data = await readDataFromFile();
+    const patrimoineData = data.find(item => item.model === 'Patrimoine');
+    
+    if (!patrimoineData) {
+      return res.status(404).send('Patrimoine not found');
+    }
+    
+    const patrimoine = patrimoineData.data;
+    const possessions = patrimoine.possessions.filter(p => p.possesseur.nom === 'John Doe');
+    res.json(possessions);
+  } catch (error) {
+    console.error('Error retrieving possessions:', error);
+    res.status(500).send('Error retrieving possessions');
+  }
+};
+
+// Route pour créer une nouvelle possession
+export const createPossession = async (req, res) => {
+  const { libelle, valeur, dateDebut, dateFin, taux } = req.body;
+
+  try {
+    const data = await readDataFromFile();
+    const patrimoineData = data.find(item => item.model === 'Patrimoine');
+    
     if (!patrimoineData) {
       return res.status(404).send('Patrimoine not found');
     }
@@ -109,62 +86,50 @@ export const createPossession = async (req, res) => {
       valeur,
       dateDebut: dateDebut ? new Date(dateDebut) : null,
       dateFin: dateFin ? new Date(dateFin) : null,
-      tauxAmortissement: taux
+      tauxAmortissement: taux || null
     };
     
     patrimoine.possessions.push(newPossession);
     await writeDataToFile(data);
-    
     res.status(201).json(newPossession);
   } catch (error) {
     console.error('Error creating possession:', error);
-    res.status(500).json({ error: 'Une erreur est survenue lors de la création de la possession.' });
+    res.status(500).send('Error creating possession');
   }
 };
 
-export const updatePossession = (req, res) => {
+// Route pour mettre à jour une possession
+export const updatePossession = async (req, res) => {
   const { libelle } = req.params;
   const { newLibelle, valeur, dateFin, tauxAmortissement } = req.body;
 
-  fs.readFile(dataFilePath, 'utf8', (err, jsonData) => {
-    if (err) {
-      console.error('Error reading data file:', err);
-      return res.status(500).send('Error reading data');
-    }
-    let data;
-    try {
-      data = JSON.parse(jsonData);
-    } catch (parseError) {
-      console.error('Error parsing JSON data:', parseError);
-      return res.status(500).send('Error parsing data');
+  try {
+    const data = await readDataFromFile();
+    const patrimoineData = data.find(item => item.model === 'Patrimoine');
+    
+    if (!patrimoineData) {
+      return res.status(404).send('Patrimoine not found');
     }
     
-    const patrimoineData = data.find(item => item.model === 'Patrimoine');
-    if (patrimoineData) {
-      const patrimoine = patrimoineData.data;
-      const possession = patrimoine.possessions.find(p => p.libelle === libelle);
-      if (possession) {
-        if (newLibelle) possession.libelle = newLibelle;
-        if (valeur) possession.valeur = valeur;
-        if (dateFin) possession.dateFin = new Date(dateFin);
-        if (tauxAmortissement) possession.tauxAmortissement = tauxAmortissement;
-
-        fs.writeFile(dataFilePath, JSON.stringify(data, null, 2), (err) => {
-          if (err) {
-            console.error('Error writing data file:', err);
-            return res.status(500).send('Error saving data');
-          }
-          res.json(possession);
-        });
-      } else {
-        res.status(404).send('Possession not found');
-      }
+    const patrimoine = patrimoineData.data;
+    const possession = patrimoine.possessions.find(p => p.libelle === libelle);
+    
+    if (possession) {
+      if (newLibelle) possession.libelle = newLibelle;
+      if (valeur) possession.valeur = valeur;
+      if (dateFin) possession.dateFin = new Date(dateFin);
+      if (tauxAmortissement) possession.tauxAmortissement = tauxAmortissement;
+      
+      await writeDataToFile(data);
+      res.json(possession);
     } else {
-      res.status(404).send('Patrimoine not found');
+      res.status(404).send('Possession not found');
     }
-  });
+  } catch (error) {
+    console.error('Error updating possession:', error);
+    res.status(500).send('Error updating possession');
+  }
 };
-
 
 // Fonction pour supprimer une possession par libelle
 export const deletePossession = async (req, res) => {
@@ -172,8 +137,8 @@ export const deletePossession = async (req, res) => {
 
   try {
     const data = await readDataFromFile();
-    
     const patrimoineData = data.find(item => item.model === 'Patrimoine');
+    
     if (!patrimoineData) {
       return res.status(404).send('Patrimoine not found');
     }
@@ -185,53 +150,39 @@ export const deletePossession = async (req, res) => {
       return res.status(404).send('Possession not found');
     }
     
-    // Supprimer la possession du tableau
     patrimoine.possessions.splice(index, 1);
-    
     await writeDataToFile(data);
-    
     res.status(200).send('Possession deleted successfully');
   } catch (error) {
     console.error('Error deleting possession:', error);
-    res.status(500).json({ error: 'An error occurred while deleting the possession.' });
+    res.status(500).send('Error deleting possession');
   }
 };
 
-
-export const closePossession = (req, res) => {
+// Fonction pour fermer une possession (mettre à jour la date de fin)
+export const closePossession = async (req, res) => {
   const { libelle } = req.params;
-  
-  fs.readFile(dataFilePath, 'utf8', (err, jsonData) => {
-    if (err) {
-      console.error('Error reading data file:', err);
-      return res.status(500).send('Error reading data');
-    }
-    let data;
-    try {
-      data = JSON.parse(jsonData);
-    } catch (parseError) {
-      console.error('Error parsing JSON data:', parseError);
-      return res.status(500).send('Error parsing data');
+
+  try {
+    const data = await readDataFromFile();
+    const patrimoineData = data.find(item => item.model === 'Patrimoine');
+    
+    if (!patrimoineData) {
+      return res.status(404).send('Patrimoine not found');
     }
     
-    const patrimoineData = data.find(item => item.model === 'Patrimoine');
-    if (patrimoineData) {
-      const patrimoine = patrimoineData.data;
-      const possession = patrimoine.possessions.find(p => p.libelle === libelle);
-      if (possession) {
-        possession.dateFin = new Date();
-        fs.writeFile(dataFilePath, JSON.stringify(data, null, 2), (err) => {
-          if (err) {
-            console.error('Error writing data file:', err);
-            return res.status(500).send('Error saving data');
-          }
-          res.json(possession);
-        });
-      } else {
-        res.status(404).send('Possession not found');
-      }
+    const patrimoine = patrimoineData.data;
+    const possession = patrimoine.possessions.find(p => p.libelle === libelle);
+    
+    if (possession) {
+      possession.dateFin = new Date();
+      await writeDataToFile(data);
+      res.json(possession);
     } else {
-      res.status(404).send('Patrimoine not found');
+      res.status(404).send('Possession not found');
     }
-  });
+  } catch (error) {
+    console.error('Error closing possession:', error);
+    res.status(500).send('Error closing possession');
+  }
 };
