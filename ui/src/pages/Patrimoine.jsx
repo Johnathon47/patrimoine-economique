@@ -6,6 +6,7 @@ function Patrimoine() {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(true);
   const [valeurPatrimoine, setValeurPatrimoine] = useState(null);
+  const [dateCalcul, setDateCalcul] = useState(new Date());
 
   useEffect(() => {
     fetch('http://localhost:5000/possession')
@@ -30,9 +31,13 @@ function Patrimoine() {
         possession.dateFin ? new Date(possession.dateFin) : new Date(),
         possession.tauxAmortissement
       );
-      return total + poss.getValeur(new Date());
+      return total + poss.getValeur(new Date(dateCalcul));
     }, 0);
     setValeurPatrimoine(valeurTotale);
+  };
+
+  const handleDateChange = (event) => {
+    setDateCalcul(new Date(event.target.value));
   };
 
   if (loading) {
@@ -77,8 +82,17 @@ function Patrimoine() {
           ))}
         </tbody>
       </Table>
-      <Button onClick={handleCalculValeur}>Calculer Valeur Totale</Button>
-      {valeurPatrimoine !== null && <h3>Valeur Totale du Patrimoine: {valeurPatrimoine}</h3>}
+      <div>
+        <label htmlFor="dateCalcul">Calculer la valeur à la date :</label>
+        <input
+          type="date"
+          id="dateCalcul"
+          value={dateCalcul.toISOString().split('T')[0]} // format yyyy-mm-dd
+          onChange={handleDateChange}
+        />
+        <Button onClick={handleCalculValeur}>Calculer Valeur Totale</Button>
+        {valeurPatrimoine !== null && <h3>Valeur Totale du Patrimoine à {dateCalcul.toDateString()}: {valeurPatrimoine}</h3>}
+      </div>
     </>
   );
 }
