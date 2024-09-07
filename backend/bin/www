@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 
+import { log } from 'console';
 import app from '../app.js'; // Importe l'application Express depuis le fichier `app.js`
 import debug from 'debug';
 import http from 'http';
@@ -10,6 +11,9 @@ const debugLog = debug('backend:server');
 // Normalise le port pour s'assurer qu'il est valide
 const PORT = normalizePort(process.env.PORT || '3000');
 app.set('port', PORT);
+app.listen(PORT, ()=> {
+  console.log(`server running on port ${PORT}`);
+})
 
 // Crée un serveur HTTP avec l'application Express
 const server = http.createServer(app);
