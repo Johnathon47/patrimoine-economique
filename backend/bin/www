@@ -11,9 +11,6 @@ const debugLog = debug('backend:server');
 // Normalise le port pour s'assurer qu'il est valide
 const PORT = normalizePort(process.env.PORT || '3000');
 app.set('port', PORT);
-app.listen(PORT, ()=> {
-  console.log(`server running on port ${PORT}`);
-})
 
 // Crée un serveur HTTP avec l'application Express
 const server = http.createServer(app);
@@ -52,4 +49,5 @@ function onListening() {
   const addr = server.address();
   const bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
   debugLog('Listening on ' + bind); // Affiche l'adresse d'écoute du serveur
+  console.log(`Server running on port ${addr.port}`); // Affiche dans la console
 }
