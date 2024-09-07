@@ -8,7 +8,7 @@ import http from 'http';
 const debugLog = debug('backend:server');
 
 // Normalise le port pour s'assurer qu'il est valide
-const PORT = normalizePort(process.env.PORT || '3000');
+const PORT = normalizePort(process.env.PORT || '0');
 app.set('port', PORT);
 
 // Crée un serveur HTTP avec l'application Express
