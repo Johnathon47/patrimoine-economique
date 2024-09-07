@@ -9,7 +9,7 @@ const PatrimoineGraph = () => {
 
   useEffect(() => {
     // Récupération des données des possessions
-    fetch('http://localhost:5000/possession')
+    fetch('http://localhost:3002/possession')
       .then(response => response.json())
       .then(data => {
         setPossessions(data);
