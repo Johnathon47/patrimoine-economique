@@ -7,7 +7,7 @@ function ListPossession() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch(`http://${process.env.REACT_APP_API_URL}/possession`)
+    fetch(`http://localhost:${process.env.PORT}/possession`)
       .then(response => response.json())
       .then(data => {
         setPossessions(data);
@@ -20,7 +20,7 @@ function ListPossession() {
   }, []);
 
   const handleClosePossession = (libelle) => {
-    fetch(`http://${process.env.REACT_APP_API_URL}/possession/${libelle}/close`, {
+    fetch(`http://localhost:${process.env.PORT}/possession/${libelle}/close`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     })
@@ -38,7 +38,7 @@ function ListPossession() {
 
   const handleDelete = (libelle) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette possession ?')) {
-      fetch(`http://${process.env.REACT_APP_API_URL}/possession/${libelle}`, { method: 'DELETE' })
+      fetch(`http://localhost${process.env.PORT}/possession/${libelle}`, { method: 'DELETE' })
         .then(response => {
           if (response.ok) {
             setPossessions(possessions.filter(possession => possession.libelle !== libelle));

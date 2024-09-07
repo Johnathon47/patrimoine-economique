@@ -13,7 +13,7 @@ function UpdatePossession() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://${process.env.REACT_APP_API_URL}/possession/${libelle}`)
+    fetch(`http://localhost:${process.env.PORT}/possession/${libelle}`)
       .then(response => response.json())
       .then(data => {
         setPossession(data);
@@ -44,7 +44,7 @@ function UpdatePossession() {
       tauxAmortissement,
     };
   
-    fetch(`http://localhost:3002/possession/${libelle}`, {
+    fetch(`http://localhost:${process.env.PORT}/possession/${libelle}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedData),
