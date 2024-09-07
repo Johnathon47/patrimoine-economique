@@ -38,7 +38,7 @@ function ListPossession() {
 
   const handleDelete = (libelle) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette possession ?')) {
-      fetch(`http://localhost${process.env.PORT}/possession/${libelle}`, { method: 'DELETE' })
+      fetch(`http://localhost:${process.env.PORT}/possession/${libelle}`, { method: 'DELETE' })
         .then(response => {
           if (response.ok) {
             setPossessions(possessions.filter(possession => possession.libelle !== libelle));
