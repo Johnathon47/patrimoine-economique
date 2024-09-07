@@ -13,7 +13,7 @@ function UpdatePossession() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    fetch(`http://localhost:5000/possession/${libelle}`)
+    fetch(`http://${process.env.REACT_APP_API_URL}/possession/${libelle}`)
       .then(response => response.json())
       .then(data => {
         setPossession(data);

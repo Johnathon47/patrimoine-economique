@@ -23,7 +23,7 @@ function CreatePossession() {
     };
 
     try {
-      const response = await fetch('http://localhost:5000/possession', {
+      const response = await fetch(`http://${process.env.REACT_APP_API_URL}/possession`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPossession),
