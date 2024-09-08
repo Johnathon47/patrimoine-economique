@@ -5,9 +5,10 @@ import { Link } from 'react-router-dom';
 function ListPossession() {
   const [possessions, setPossessions] = useState([]);
   const [loading, setLoading] = useState(true);
+  const backendUrl = 'https://patrimoine-economique-ylhh.onrender.com';
 
   useEffect(() => {
-    fetch(`http://localhost:5000/possession`)
+    fetch(`${backendUrl}/possession`)
       .then(response => response.json())
       .then(data => {
         setPossessions(data);
@@ -20,7 +21,7 @@ function ListPossession() {
   }, []);
 
   const handleClosePossession = (libelle) => {
-    fetch(`http://localhost:5000/possession/${libelle}/close`, {
+    fetch(`${backendUrl}/possession/${libelle}/close`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
     })
@@ -38,7 +39,7 @@ function ListPossession() {
 
   const handleDelete = (libelle) => {
     if (window.confirm('Êtes-vous sûr de vouloir supprimer cette possession ?')) {
-      fetch(`http://localhost:5000/possession/${libelle}`, { method: 'DELETE' })
+      fetch(`${backendUrl}/possession/${libelle}`, { method: 'DELETE' })
         .then(response => {
           if (response.ok) {
             setPossessions(possessions.filter(possession => possession.libelle !== libelle));

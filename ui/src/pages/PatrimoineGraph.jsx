@@ -6,10 +6,11 @@ const PatrimoineGraph = () => {
   const [possessions, setPossessions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [selectedInterval, setSelectedInterval] = useState('2023-01-01:2023-12-31');
+  const backendUrl = 'https://patrimoine-economique-ylhh.onrender.com';
 
   useEffect(() => {
     // Récupération des données des possessions
-    fetch(`http://localhost:5000/possession`)
+    fetch(`${backendUrl}/possession`)
       .then(response => response.json())
       .then(data => {
         setPossessions(data);

@@ -11,9 +11,10 @@ function UpdatePossession() {
   const [tauxAmortissement, setTauxAmortissement] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const backendUrl = 'https://patrimoine-economique-ylhh.onrender.com';
 
   useEffect(() => {
-    fetch(`http://localhost:5000/possession/${libelle}`)
+    fetch(`${backendUrl}/possession/${libelle}`)
       .then(response => response.json())
       .then(data => {
         setPossession(data);
@@ -44,7 +45,7 @@ function UpdatePossession() {
       tauxAmortissement,
     };
   
-    fetch(`http://localhost:5000/possession/${libelle}`, {
+    fetch(`${backendUrl}/possession/${libelle}`, {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(updatedData),

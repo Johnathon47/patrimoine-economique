@@ -10,6 +10,7 @@ function CreatePossession() {
   const [taux, setTaux] = useState('');
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const backendUrl = 'https://patrimoine-economique-ylhh.onrender.com';
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -23,7 +24,7 @@ function CreatePossession() {
     };
 
     try {
-      const response = await fetch(`http://locahost:5000/possession`, {
+      const response = await fetch(`${backendUrl}/possession`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPossession),

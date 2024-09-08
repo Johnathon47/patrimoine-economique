@@ -7,9 +7,10 @@ function Patrimoine() {
   const [loading, setLoading] = useState(true);
   const [valeurPatrimoine, setValeurPatrimoine] = useState(null);
   const [dateCalcul, setDateCalcul] = useState(new Date());
+  const backendUrl = 'https://patrimoine-economique-ylhh.onrender.com';
 
   useEffect(() => {
-    fetch(`http://localhost:5000/possession`)
+    fetch(`${backendUrl}/possession`)
       .then(response => response.json())
       .then(json => {
         setData(json);
