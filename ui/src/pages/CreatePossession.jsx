@@ -23,7 +23,7 @@ function CreatePossession() {
     };
 
     try {
-      const response = await fetch(`http://locahost:${process.env.PORT}/possession`, {
+      const response = await fetch(`http://locahost:5000/possession`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newPossession),

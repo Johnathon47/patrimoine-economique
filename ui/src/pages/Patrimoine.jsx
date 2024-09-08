@@ -9,7 +9,7 @@ function Patrimoine() {
   const [dateCalcul, setDateCalcul] = useState(new Date());
 
   useEffect(() => {
-    fetch(`http://localhost:${process.env.PORT}/possession`)
+    fetch(`http://localhost:5000/possession`)
       .then(response => response.json())
       .then(json => {
         setData(json);
